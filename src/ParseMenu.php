@@ -31,19 +31,21 @@ class ParseMenu {
         // If a page should be selected
         if ( ! empty($config['page_selected']) ) {
             // Find the first occurrence of the page_id
-            $this->path = $this->findPage((int)$config['page_selected']);
+            $this->path = $this->findPath($this->menu, (int)$config['page_selected']);
         }
+
+        var_dump($this->path);
 
         return $menu;
     }
 
-    protected function findPath( $page_id )
+    protected function findPath( array &$menu, $page_id )
     {
         $path = array();
 
-        foreach ( $this->menu as $item ) {
+        foreach ( $menu as $item ) {
             if ( count($item['submenu']) > 0 ) {
-                $sub_found = findMenuPath($item['submenu'], $page_id);
+                $sub_found = $this->findPath($item['submenu'], $page_id);
                 $path = array_merge($path, $sub_found);
 
                 if ( $sub_found ) {
