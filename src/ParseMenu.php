@@ -7,14 +7,55 @@
 class ParseMenu {
 
     /**
+     * @var
+     */
+    protected $menu;
+
+    /**
+     * @var
+     */
+    protected $path;
+
+    /**
      * Parse the menu items array
      *
      * @param array $menu
      * @param array $config
      * @return array
      */
-    function parse(array &$menu, $config = array())
+    function parse( array &$menu, $config = array() )
     {
+        // Set the menu locally
+        $this->menu = $menu;
+
+        // If a page should be selected
+        if ( ! empty($config['page_selected']) ) {
+            // Find the first occurrence of the page_id
+            $this->path = $this->findPage((int)$config['page_selected']);
+        }
+
         return $menu;
+    }
+
+    protected function findPath( $page_id )
+    {
+        $path = array();
+
+        foreach ( $this->menu as $item ) {
+            if ( count($item['submenu']) > 0 ) {
+                $sub_found = findMenuPath($item['submenu'], $page_id);
+                $path = array_merge($path, $sub_found);
+
+                if ( $sub_found ) {
+                    $path[] = $item['menu_item_id'];
+                }
+            }
+
+            if ( $item['page_id'] == $page_id ) {
+                $path[] = $item['menu_item_id'];
+            }
+        }
+
+        return $path;
     }
 }
