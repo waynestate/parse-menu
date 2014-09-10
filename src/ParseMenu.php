@@ -37,6 +37,11 @@ class ParseMenu {
             $this->menu = $this->trimMenu($this->menu);
         }
 
+        // If there is a limit to the levels to display from the root
+        if ( ! empty($config['display_levels']) || ! empty($config['skip_levels']) ) {
+            $this->menu = $this->menuSlice( $this->menu, (int)$config['skip_levels'], (int)$config['display_levels'] );
+        }
+
         return $this->menu;
     }
 
@@ -91,5 +96,23 @@ class ParseMenu {
         }
 
         return $path_menu;
+    }
+
+    protected function menuSlice ( array $menu, $start, $end, $level = 0 )
+    {
+        $slice_menu = array();
+
+        foreach ( $menu as $item ) {
+            if ( $level >= $start && $level < $end ) {
+                if ( ! empty($item['submenu']) ) {
+                    $item['submenu'] = $this->menuSlice( $item['submenu'], $start, $end, ($level+1) );
+                }
+
+                $slice_menu[] = $item;
+            }
+
+        }
+
+        return $slice_menu;
     }
 }
