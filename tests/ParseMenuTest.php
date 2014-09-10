@@ -56,8 +56,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // There should be no different in the base and resulting array
-        // TODO: Make this investigate multi-dimensions
-        $this->assertEmpty(array_diff($parsed, $this->menu));
+        $this->assertEmpty($this->arrayRecursiveDiff($parsed, $this->menu));
     }
 
     /**
@@ -75,5 +74,25 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
 
         // Verify menu item has a boolean flag
         $this->assertTrue($parsed[0]['is_selected']);
+    }
+
+    protected function arrayRecursiveDiff($aArray1, $aArray2) {
+        $aReturn = array();
+
+        foreach ($aArray1 as $mKey => $mValue) {
+            if (array_key_exists($mKey, $aArray2)) {
+                if (is_array($mValue)) {
+                    $aRecursiveDiff = $this->arrayRecursiveDiff($mValue, $aArray2[$mKey]);
+                    if (count($aRecursiveDiff)) { $aReturn[$mKey] = $aRecursiveDiff; }
+                } else {
+                    if ($mValue != $aArray2[$mKey]) {
+                        $aReturn[$mKey] = $mValue;
+                    }
+                }
+            } else {
+                $aReturn[$mKey] = $mValue;
+            }
+        }
+        return $aReturn;
     }
 }
