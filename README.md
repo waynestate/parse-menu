@@ -25,7 +25,7 @@ Create the object
 
     # start.php
 
-    use Waynestate\Promotions\ParseMenu;
+    use Waynestate\Menuitems\ParseMenu;
 
     ...
 
