@@ -76,6 +76,25 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $this->assertTrue($parsed[0]['is_selected']);
     }
 
+    /**
+     * @test
+     */
+    public function pageNotFoundAndNothingSelected()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 999
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Verify no main menu items have the is_selected flag
+        foreach ( $parsed as $item ) {
+            $this->assertFalse( $item['is_selected'] );
+        }
+    }
+
     protected function arrayRecursiveDiff($aArray1, $aArray2) {
         $aReturn = array();
 
