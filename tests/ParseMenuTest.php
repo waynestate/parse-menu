@@ -126,7 +126,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         // Parse the menu based on the config
         $parsed = $this->parser->parse($this->menu, $config);
 
-        // Verify menu item has a boolean flag
+        // Verify the first menu item no longer has submenu items to display
         $this->assertCount(0, $parsed[0]['submenu']);
     }
 
@@ -146,6 +146,27 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         // Verify no main menu items have the is_selected flag
         foreach ( $parsed as $item ) {
             $this->assertFalse( $item['is_selected'] );
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldLimitToOneLevelDeep()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 8,
+            'display_levels' => 1,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // Ensure each main item no longer has sub menu items
+            $this->assertCount(0, $item['submenu']);
         }
     }
 

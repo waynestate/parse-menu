@@ -29,7 +29,7 @@ class ParseMenu {
         $this->menu = $menu;
 
         // If a page should be selected
-        if ( ! empty($config['page_selected']) ) {
+        if ( isset($config['page_selected']) ) {
             // Find the first occurrence of the page_id
             $this->path = $this->findPath($this->menu, (int)$config['page_selected']);
 
@@ -38,12 +38,16 @@ class ParseMenu {
         }
 
         // If there is a limit to the levels to display from the root
-        if ( ! empty($config['display_levels']) || ! empty($config['skip_levels']) ) {
+        if ( isset($config['display_levels']) || isset($config['skip_levels']) ) {
+            // Set some defaults
+            $skip = isset($config['skip_levels']) ? (int)$config['skip_levels'] : 0;
+            $display = isset($config['display_levels']) ? (int)$config['display_levels'] : 1;
+
             // Ensure the display is greater than the skip
             // TODO: Probably should throw an error
-            if ( (int)$config['skip_levels'] <= (int)$config['display_levels'] ) {
+            if ( $skip <= $display ) {
                 // Slice off the beginning and end of the array if needed
-                $this->menu = $this->menuSlice( $this->menu, (int)$config['skip_levels'], (int)$config['display_levels'] );
+                $this->menu = $this->menuSlice( $this->menu, $skip, $display );
             }
         }
 
