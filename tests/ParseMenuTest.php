@@ -30,14 +30,51 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                 'menu_id' => 1,
                 'page_id' => 1,
                 'display_name' => 'First',
-                'submenu' => array(),
+                'submenu' => array(
+                    array(
+                        'menu_item_id' => 3,
+                        'menu_id' => 1,
+                        'page_id' => 4,
+                        'display_name' => 'Nest One',
+                        'submenu' => array(),
+                    ),
+                    array(
+                        'menu_item_id' => 4,
+                        'menu_id' => 1,
+                        'page_id' => 5,
+                        'display_name' => 'Nest Two',
+                        'submenu' => array(),
+                    ),
+                    array(
+                        'menu_item_id' => 5,
+                        'menu_id' => 1,
+                        'page_id' => 6,
+                        'display_name' => 'Nest Three',
+                        'submenu' => array(),
+                    ),
+                ),
             ),
             array(
                 'menu_item_id' => 2,
                 'menu_id' => 1,
-                'page_id' => 3,
+                'page_id' => 2,
                 'display_name' => 'Second',
-                'submenu' => array(),
+                'submenu' => array(
+                    array(
+                        'menu_item_id' => 6,
+                        'menu_id' => 1,
+                        'page_id' => 7,
+                        'display_name' => 'Two Nest One',
+                        'submenu' => array(),
+                    ),
+                    array(
+                        'menu_item_id' => 7,
+                        'menu_id' => 1,
+                        'page_id' => 8,
+                        'display_name' => 'Two Nest Two',
+                        'submenu' => array(),
+                    ),
+                ),
             ),
         );
 
@@ -74,6 +111,23 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
 
         // Verify menu item has a boolean flag
         $this->assertTrue($parsed[0]['is_selected']);
+    }
+
+    /**
+     * @test
+     */
+    public function trimNonSelectedMenus()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 8
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Verify menu item has a boolean flag
+        $this->assertCount(0, $parsed[0]['submenu']);
     }
 
     /**
