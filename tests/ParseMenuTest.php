@@ -286,7 +286,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
 
     /**
      * @test
-     * @expectedException InvalidDisplayLevels
+     * @expectedException Waynestate\Menuitems\InvalidDisplayLevelsException
      */
     public function shouldNotAllowDisplayLevelTwoWithoutPageSelection()
     {

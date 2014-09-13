@@ -1,5 +1,7 @@
 <?php namespace Waynestate\Menuitems;
 
+use Waynestate\Menuitems\InvalidDisplayLevelsException;
+
 /**
  * Class ParseMenu
  * @package Waynestate
@@ -17,11 +19,10 @@ class ParseMenu {
     protected $path;
 
     /**
-     * Parse the menu items array
-     *
      * @param array $menu
      * @param array $config
      * @return array
+     * @throws InvalidDisplayLevelsException
      */
     function parse( array &$menu, $config = array() )
     {
@@ -30,6 +31,12 @@ class ParseMenu {
 
         // Set the default path
         $this->path = array();
+
+        // Set a default levels to skip from root
+        $skip = isset($config['skip_levels']) ? (int)$config['skip_levels'] : 0;
+
+        // Set a default levels to display
+        $display = isset($config['display_levels']) ? (int)$config['display_levels'] : 0;
 
         // If a page should be selected
         if ( isset($config['page_selected']) ) {
@@ -40,16 +47,15 @@ class ParseMenu {
             $this->menu = $this->trimMenu($this->menu);
         }
 
-        // Set a default levels to skip from root
-        $skip = isset($config['skip_levels']) ? (int)$config['skip_levels'] : 0;
-
         // If there is a need to skip levels from the root
         if ( $skip != 0 && $skip < count($this->path) ) {
             $this->menu = $this->sliceFromRoot($this->menu, $skip);
         }
 
-        // Set a default levels to display
-        $display = isset($config['display_levels']) ? (int)$config['display_levels'] : 0;
+        // Require a path selection to display more than one level of the menu
+        if ( $display > 1 && count($this->path) < 1 ){
+            throw new InvalidDisplayLevelsException();
+        }
 
         // If there is a specified levels to display and it is smaller than the path
         if ( $display > 0 &&
@@ -137,6 +143,12 @@ class ParseMenu {
         return $path_menu;
     }
 
+    /**
+     * @param array $menu
+     * @param $start
+     * @param int $level
+     * @return array
+     */
     protected function sliceFromRoot( array $menu, $start, $level = 0 )
     {
         // If we have reached our start level
