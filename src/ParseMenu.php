@@ -159,24 +159,25 @@ class ParseMenu {
      * @param int $level
      * @return array
      */
-    protected function menuSlice ( array $menu, $end, $level = 0 )
+    protected function menuSlice ( array $menu, $end, $level = 1 )
     {
         // Start with a blank sliced array
         $slice_menu = array();
-        //var_dump($end);
-        //var_dump($level);
-        //var_dump($menu);
 
+        // If we have reached the final level to display
+        if ( $level > $end ) {
 
-        // Loop through each menu item
-        foreach ( $menu as $item ) {
+            // Chop off any submenus and return
+            return array();
+        } else {
+            // Loop through each item in the menu
+            foreach ( $menu as $item ) {
 
-            // If we are within the bounds of the slice
-            if ( $level <= $end ) {
+                // If there is a submenu
+                if ( count($item) > 0) {
 
-                // If there are submenu items, dive into that new level
-                if ( ! empty($item['submenu']) ) {
-                    $item['submenu'] = $this->menuSlice( $item['submenu'], $end, ++$level );
+                    // Dig deeper into the next level of the menu
+                    $item['submenu'] = $this->menuSlice( $menu, $end, ++$level);
                 }
 
                 // If in bounds, add the item to the new menu
@@ -184,7 +185,7 @@ class ParseMenu {
             }
         }
 
-        // Returned the sliced menu
+        // Should never get to this point
         return $slice_menu;
     }
 }
