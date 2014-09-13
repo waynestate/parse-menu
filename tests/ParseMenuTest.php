@@ -205,6 +205,29 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @test
+     */
+    public function shouldSkipOneLevelFromRoot()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 5,
+            'skip_levels' => 1,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // The parent_id of each of these items should not be the root '0' item
+            $this->assertNotEquals( 0, $item['parent_id'] );
+        }
+    }
+
+
+
+    /**
      * @param $aArray1
      * @param $aArray2
      * @return array

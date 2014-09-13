@@ -37,18 +37,20 @@ class ParseMenu {
             $this->menu = $this->trimMenu($this->menu);
         }
 
-        // If there is a limit to the levels to display from the root
-        if ( isset($config['display_levels']) || isset($config['skip_levels']) ) {
-            // Set some defaults
-            $skip = isset($config['skip_levels']) ? (int)$config['skip_levels'] : 0;
-            $display = isset($config['display_levels']) ? (int)$config['display_levels'] : 1;
+        // Set a default levels to skip from root
+        $skip = isset($config['skip_levels']) ? (int)$config['skip_levels'] : 0;
 
-            // Ensure the display is greater than the skip
-            // TODO: Probably should throw an error
-            if ( $skip <= $display ) {
-                // Slice off the beginning and end of the array if needed
-                $this->menu = $this->menuSlice( $this->menu, $skip, $display );
-            }
+        // If there is a need to skip levels from the root
+        if ( $skip != 0 && $skip < count($this->path) ) {
+            $this->menu = $this->sliceFromRoot($this->menu, $skip);
+        }
+
+        // Set a default levels to display
+        $display = isset($config['display_levels']) ? (int)$config['display_levels'] : 0;
+
+        // If there is a specified levels to display and it is smaller than the path
+        if ( $display > 0 && $display < ( count($this->path) - $skip ) ) {
+            $this->menu = $this->menuSlice($this->menu, $display);
         }
 
         // The menu now has been modified with $config
@@ -130,27 +132,51 @@ class ParseMenu {
         return $path_menu;
     }
 
+    protected function sliceFromRoot( array $menu, $start, $level = 0 )
+    {
+        // If we have reached our start level
+        if ( $level >= $start ) {
+            // Return the rest of the menu
+            return $menu;
+        } else {
+            // Loop through each menu item
+            foreach ( $menu as $item ) {
+                // If there are sub menu items
+                if ( count($item['submenu']) > 0 ) {
+                    // Dig deeper into the next level
+                    return $this->sliceFromRoot( $item['submenu'], $start, ++ $level );
+                }
+            }
+        }
+
+        // Probably will never reach this
+        return array();
+    }
+
     /**
      * @param array $menu
-     * @param $start
      * @param $end
      * @param int $level
      * @return array
      */
-    protected function menuSlice ( array $menu, $start, $end, $level = 0 )
+    protected function menuSlice ( array $menu, $end, $level = 0 )
     {
         // Start with a blank sliced array
         $slice_menu = array();
+        //var_dump($end);
+        //var_dump($level);
+        //var_dump($menu);
+
 
         // Loop through each menu item
         foreach ( $menu as $item ) {
 
             // If we are within the bounds of the slice
-            if ( $level > $start && $level <= $end ) {
+            if ( $level <= $end ) {
 
                 // If there are submenu items, dive into that new level
                 if ( ! empty($item['submenu']) ) {
-                    $item['submenu'] = $this->menuSlice( $item['submenu'], $start, $end, $level++ );
+                    $item['submenu'] = $this->menuSlice( $item['submenu'], $end, ++$level );
                 }
 
                 // If in bounds, add the item to the new menu
