@@ -41,10 +41,10 @@ class ParseMenu {
         // If a page should be selected
         if ( isset($config['page_selected']) ) {
             // Find the first occurrence of the page_id
-            $this->path = $this->findPath($this->menu, (int)$config['page_selected']);
+            $this->path = $this->findPath( $this->menu, (int) $config['page_selected'] );
 
             // Trim the non-needed limbs off the menu
-            $this->menu = $this->trimMenu($this->menu);
+            $this->menu = $this->trimMenu( $this->menu );
         }
 
         // If there is a need to skip levels from the root
@@ -53,15 +53,15 @@ class ParseMenu {
         }
 
         // Require a path selection to display more than one level of the menu
-        if ( $display > 1 && count($this->path) < 1 ){
-            throw new InvalidDisplayLevelsException();
+        if ( $display > 1 && count($this->path) < 1 ) {
+            throw new InvalidDisplayLevelsException('Page must be selected to display more than one level.');
         }
 
         // If there is a specified levels to display and it is smaller than the path
         if ( $display > 0 &&
              ( count($this->path) == 0 || $display < ( count($this->path) - $skip ) )
         ) {
-            $this->menu = $this->menuSlice($this->menu, $display);
+            $this->menu = $this->menuSlice( $this->menu, $display );
         }
 
         // The menu now has been modified with $config
@@ -85,10 +85,10 @@ class ParseMenu {
             if ( ! empty($item['submenu']) ) {
 
                 // Try to look for the page within the submenu
-                $sub_found = $this->findPath($item['submenu'], $page_id);
+                $sub_found = $this->findPath( $item['submenu'], $page_id );
 
                 // Append the path to get the trail
-                $path = array_merge($path, $sub_found);
+                $path = array_merge( $path, $sub_found );
 
                 // If there was something found build the path
                 if ( $sub_found ) {
@@ -121,7 +121,7 @@ class ParseMenu {
             $item['is_selected'] = false;
 
             // If this menu item is found in the path
-            if ( in_array($item['menu_item_id'], $this-> path) ) {
+            if ( in_array( $item['menu_item_id'], $this->path ) ) {
 
                 // This item should be in the selected path
                 $item['is_selected'] = true;
@@ -162,7 +162,7 @@ class ParseMenu {
             foreach ( $menu as $item ) {
 
                 // If there are sub menu items
-                if ( count($item['submenu']) > 0 ) {
+                if ( count( $item['submenu'] ) > 0 ) {
 
                     // Dig deeper into the next level
                     return $this->sliceFromRoot( $item['submenu'], $start, ++ $level );
@@ -195,10 +195,10 @@ class ParseMenu {
             foreach ( $menu as $item ) {
 
                 // If there is a submenu
-                if ( count($item) > 0) {
+                if ( count($item) > 0 ) {
 
                     // Dig deeper into the next level of the menu
-                    $item['submenu'] = $this->menuSlice( $menu, $end, ++$level);
+                    $item['submenu'] = $this->menuSlice( $menu, $end, ++ $level );
                 }
 
                 // If in bounds, add the item to the new menu
