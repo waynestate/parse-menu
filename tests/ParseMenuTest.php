@@ -29,12 +29,14 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                 'menu_item_id' => 1,
                 'menu_id' => 1,
                 'page_id' => 1,
+                'parent_id' => 0,
                 'display_name' => 'First',
                 'submenu' => array(
                     array(
                         'menu_item_id' => 3,
                         'menu_id' => 1,
                         'page_id' => 4,
+                        'parent_id' => 1,
                         'display_name' => 'Nest One',
                         'submenu' => array(),
                     ),
@@ -42,6 +44,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                         'menu_item_id' => 4,
                         'menu_id' => 1,
                         'page_id' => 5,
+                        'parent_id' => 1,
                         'display_name' => 'Nest Two',
                         'submenu' => array(),
                     ),
@@ -49,6 +52,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                         'menu_item_id' => 5,
                         'menu_id' => 1,
                         'page_id' => 6,
+                        'parent_id' => 1,
                         'display_name' => 'Nest Three',
                         'submenu' => array(),
                     ),
@@ -58,12 +62,14 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                 'menu_item_id' => 2,
                 'menu_id' => 1,
                 'page_id' => 2,
+                'parent_id' => 0,
                 'display_name' => 'Second',
                 'submenu' => array(
                     array(
                         'menu_item_id' => 6,
                         'menu_id' => 1,
                         'page_id' => 7,
+                        'parent_id' => 2,
                         'display_name' => 'Two Nest One',
                         'submenu' => array(),
                     ),
@@ -71,6 +77,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                         'menu_item_id' => 7,
                         'menu_id' => 1,
                         'page_id' => 8,
+                        'parent_id' => 2,
                         'display_name' => 'Two Nest Two',
                         'submenu' => array(),
                     ),
@@ -170,6 +177,38 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         }
     }
 
+    /**
+     * @test
+     */
+    public function shouldLimitToMultipleDeep()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 8,
+            'display_levels' => 2,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // If this item is in the path
+            if ($item['is_selected']) {
+                // There should be sub menu items
+                $this->assertNotCount( 0, $item['submenu'] );
+            } else {
+                // There should not be sub menu items
+                $this->assertCount( 0, $item['submenu'] );
+            }
+        }
+    }
+
+    /**
+     * @param $aArray1
+     * @param $aArray2
+     * @return array
+     */
     protected function arrayRecursiveDiff($aArray1, $aArray2) {
         $aReturn = array();
 

@@ -146,11 +146,11 @@ class ParseMenu {
         foreach ( $menu as $item ) {
 
             // If we are within the bounds of the slice
-            if ( $level >= $start && $level < $end ) {
+            if ( $level > $start && $level <= $end ) {
 
                 // If there are submenu items, dive into that new level
                 if ( ! empty($item['submenu']) ) {
-                    $item['submenu'] = $this->menuSlice( $item['submenu'], $start, $end, ($level+1) );
+                    $item['submenu'] = $this->menuSlice( $item['submenu'], $start, $end, $level++ );
                 }
 
                 // If in bounds, add the item to the new menu
