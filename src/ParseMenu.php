@@ -2,6 +2,7 @@
 
 use Waynestate\Menuitems\ParserInterface;
 use Waynestate\Menuitems\InvalidDisplayLevelsException;
+use Waynestate\Menuitems\InvalidSkipLevelsException;
 
 /**
  * Class ParseMenu
@@ -17,21 +18,19 @@ class ParseMenu implements ParserInterface {
     /**
      * @var
      */
-    protected $path;
+    protected $path = array();
 
     /**
      * @param array $menu
      * @param array $config
-     * @return array
      * @throws InvalidDisplayLevelsException
+     * @throws InvalidSkipLevelsException
+     * @return array
      */
     function parse( array &$menu, array $config = array() )
     {
         // Set the menu locally
         $this->menu = $menu;
-
-        // Set the default path
-        $this->path = array();
 
         // Set a default levels to skip from root
         $skip = isset($config['skip_levels']) ? (int)$config['skip_levels'] : 0;
@@ -49,13 +48,8 @@ class ParseMenu implements ParserInterface {
         }
 
         // If there is a need to skip levels from the root
-        if ( $skip != 0 && $skip < count($this->path) ) {
+        if ( $skip > 0 ) {
             $this->menu = $this->sliceFromRoot($this->menu, $skip);
-        }
-
-        // Require a path selection to display more than one level of the menu
-        if ( $display > 1 && count($this->path) < 1 ) {
-            throw new InvalidDisplayLevelsException('Page must be selected to display more than one level.');
         }
 
         // If there is a specified levels to display and it is smaller than the path
@@ -148,26 +142,31 @@ class ParseMenu implements ParserInterface {
      * @param array $menu
      * @param $start
      * @param int $level
+     * @throws InvalidSkipLevelsException
      * @return array
      */
     protected function sliceFromRoot( array $menu, $start, $level = 0 )
     {
+        // Require the skip to be less than the selected path
+        if ( $start > 0 && $start >= count($this->path) ) {
+            throw new InvalidSkipLevelsException('Selected path must be deeper than the levels to skip.');
+        }
+
         // If we have reached our start level
         if ( $level >= $start ) {
 
             // Return the rest of the menu
             return $menu;
-        } else {
+        }
 
-            // Loop through each menu item
-            foreach ( $menu as $item ) {
+        // Loop through each menu item
+        foreach ( $menu as $item ) {
 
-                // If there are sub menu items
-                if ( count( $item['submenu'] ) > 0 ) {
+            // If there are sub menu items
+            if ( count( $item['submenu'] ) > 0 ) {
 
-                    // Dig deeper into the next level
-                    return $this->sliceFromRoot( $item['submenu'], $start, ++ $level );
-                }
+                // Dig deeper into the next level
+                return $this->sliceFromRoot( $item['submenu'], $start, ++ $level );
             }
         }
 
@@ -179,10 +178,16 @@ class ParseMenu implements ParserInterface {
      * @param array $menu
      * @param $end
      * @param int $level
+     * @throws InvalidDisplayLevelsException
      * @return array
      */
     protected function menuSlice ( array $menu, $end, $level = 1 )
     {
+        // Require a path selection to display more than one level of the menu
+        if ( $end > 1 && count($this->path) < 1 ) {
+            throw new InvalidDisplayLevelsException('Page must be selected to display more than one level.');
+        }
+
         // Start with a blank sliced array
         $slice_menu = array();
 
