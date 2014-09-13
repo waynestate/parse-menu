@@ -67,3 +67,10 @@ Config Options
     TODO: 'show_levels' = Number of levels to display from the leaf (requires page_selected)
     TODO: 'add_home' = Add 'Home' as the first menu item (this may not be needed)
 
+Tests
+
+    phpunit
+
+Code Coverage
+
+    phpunit --coverage-html ./coverage
