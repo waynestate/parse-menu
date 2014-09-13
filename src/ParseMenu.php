@@ -1,12 +1,13 @@
 <?php namespace Waynestate\Menuitems;
 
+use Waynestate\Menuitems\ParserInterface;
 use Waynestate\Menuitems\InvalidDisplayLevelsException;
 
 /**
  * Class ParseMenu
  * @package Waynestate
  */
-class ParseMenu {
+class ParseMenu implements ParserInterface {
 
     /**
      * @var
@@ -24,7 +25,7 @@ class ParseMenu {
      * @return array
      * @throws InvalidDisplayLevelsException
      */
-    function parse( array &$menu, $config = array() )
+    function parse( array &$menu, array $config = array() )
     {
         // Set the menu locally
         $this->menu = $menu;
