@@ -170,7 +170,7 @@ class ParseMenu {
             }
         }
 
-        // Probably will never reach this
+        // If the menu does not have 'submenu' array (edge case)
         return array();
     }
 

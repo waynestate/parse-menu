@@ -300,6 +300,33 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @test
+     */
+    public function shouldAllowLargeDisplayLevelWithClosePageSelection()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 4,
+            'display_levels' => 999,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // If this item is in the path
+            if ($item['is_selected']) {
+                // There should be sub menu items
+                $this->assertNotCount( 0, $item['submenu'] );
+            } else {
+                // There should not be sub menu items
+                $this->assertCount( 0, $item['submenu'] );
+            }
+        }
+    }
+
+    /**
      * @param $aArray1
      * @param $aArray2
      * @return array
