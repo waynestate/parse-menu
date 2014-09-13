@@ -29,15 +29,76 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                 'menu_item_id' => 1,
                 'menu_id' => 1,
                 'page_id' => 1,
+                'parent_id' => 0,
                 'display_name' => 'First',
-                'submenu' => array(),
+                'submenu' => array(
+                    array(
+                        'menu_item_id' => 3,
+                        'menu_id' => 1,
+                        'page_id' => 4,
+                        'parent_id' => 1,
+                        'display_name' => 'Nest One',
+                        'submenu' => array(),
+                    ),
+                    array(
+                        'menu_item_id' => 4,
+                        'menu_id' => 1,
+                        'page_id' => 5,
+                        'parent_id' => 1,
+                        'display_name' => 'Nest Two',
+                        'submenu' => array(),
+                    ),
+                    array(
+                        'menu_item_id' => 5,
+                        'menu_id' => 1,
+                        'page_id' => 6,
+                        'parent_id' => 1,
+                        'display_name' => 'Nest Three',
+                        'submenu' => array(
+                            array(
+                                'menu_item_id' => 8,
+                                'menu_id' => 1,
+                                'page_id' => 9,
+                                'parent_id' => 5,
+                                'display_name' => 'Nest Nest One',
+                                'submenu' => array(),
+                            ),
+                            array(
+                                'menu_item_id' => 9,
+                                'menu_id' => 1,
+                                'page_id' => 10,
+                                'parent_id' => 5,
+                                'display_name' => 'Nest Nest Two',
+                                'submenu' => array(),
+                            ),
+                        ),
+                    ),
+                ),
             ),
             array(
                 'menu_item_id' => 2,
                 'menu_id' => 1,
-                'page_id' => 3,
+                'page_id' => 2,
+                'parent_id' => 0,
                 'display_name' => 'Second',
-                'submenu' => array(),
+                'submenu' => array(
+                    array(
+                        'menu_item_id' => 6,
+                        'menu_id' => 1,
+                        'page_id' => 7,
+                        'parent_id' => 2,
+                        'display_name' => 'Two Nest One',
+                        'submenu' => array(),
+                    ),
+                    array(
+                        'menu_item_id' => 7,
+                        'menu_id' => 1,
+                        'page_id' => 8,
+                        'parent_id' => 2,
+                        'display_name' => 'Two Nest Two',
+                        'submenu' => array(),
+                    ),
+                ),
             ),
         );
 
@@ -79,6 +140,23 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
     /**
      * @test
      */
+    public function trimNonSelectedMenus()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 8
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Verify the first menu item no longer has submenu items to display
+        $this->assertCount(0, $parsed[0]['submenu']);
+    }
+
+    /**
+     * @test
+     */
     public function pageNotFoundAndNothingSelected()
     {
         // Determine a page to be selected
@@ -95,6 +173,164 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         }
     }
 
+    /**
+     * @test
+     */
+    public function shouldLimitToOneLevelDeep()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 8,
+            'display_levels' => 1,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // Ensure each main item no longer has sub menu items
+            $this->assertCount(0, $item['submenu']);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldLimitToMultipleDeep()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 8,
+            'display_levels' => 2,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // If this item is in the path
+            if ($item['is_selected']) {
+                // There should be sub menu items
+                $this->assertNotCount( 0, $item['submenu'] );
+            } else {
+                // There should not be sub menu items
+                $this->assertCount( 0, $item['submenu'] );
+            }
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSkipOneLevelFromRoot()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 5,
+            'skip_levels' => 1,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // The parent_id of each of these items should not be the root '0' item
+            $this->assertNotEquals( 0, $item['parent_id'] );
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSkipAndLimitDisplayLevels()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 10,
+            'skip_levels' => 1,
+            'display_levels' => 1,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // There should not be sub menu items
+            $this->assertCount( 0, $item['submenu'] );
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAllowDisplayLevelOneWithoutPageSelection()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'display_levels' => 1,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // There should not be sub menu items
+            $this->assertCount( 0, $item['submenu'] );
+        }
+    }
+
+    /**
+     * @test
+     * @expectedException Waynestate\Menuitems\InvalidDisplayLevelsException
+     */
+    public function shouldNotAllowDisplayLevelTwoWithoutPageSelection()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'display_levels' => 2,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAllowLargeDisplayLevelWithClosePageSelection()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 4,
+            'display_levels' => 999,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // If this item is in the path
+            if ($item['is_selected']) {
+                // There should be sub menu items
+                $this->assertNotCount( 0, $item['submenu'] );
+            } else {
+                // There should not be sub menu items
+                $this->assertCount( 0, $item['submenu'] );
+            }
+        }
+    }
+
+    /**
+     * @param $aArray1
+     * @param $aArray2
+     * @return array
+     */
     protected function arrayRecursiveDiff($aArray1, $aArray2) {
         $aReturn = array();
 
