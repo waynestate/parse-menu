@@ -54,7 +54,24 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                         'page_id' => 6,
                         'parent_id' => 1,
                         'display_name' => 'Nest Three',
-                        'submenu' => array(),
+                        'submenu' => array(
+                            array(
+                                'menu_item_id' => 8,
+                                'menu_id' => 1,
+                                'page_id' => 9,
+                                'parent_id' => 5,
+                                'display_name' => 'Nest Nest One',
+                                'submenu' => array(),
+                            ),
+                            array(
+                                'menu_item_id' => 9,
+                                'menu_id' => 1,
+                                'page_id' => 10,
+                                'parent_id' => 5,
+                                'display_name' => 'Nest Nest Two',
+                                'submenu' => array(),
+                            ),
+                        ),
                     ),
                 ),
             ),
@@ -225,7 +242,27 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         }
     }
 
+    /**
+     * @test
+     */
+    public function shouldSkipAndLimitDisplayLevels()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 10,
+            'skip_levels' => 1,
+            'display_levels' => 1,
+        );
 
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // There should not be sub menu items
+            $this->assertCount( 0, $item['submenu'] );
+        }
+    }
 
     /**
      * @param $aArray1
