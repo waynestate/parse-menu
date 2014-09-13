@@ -265,6 +265,41 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
     }
 
     /**
+     * @test
+     */
+    public function shouldAllowDisplayLevelOneWithoutPageSelection()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'display_levels' => 1,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Loop through all main level items
+        foreach ($parsed as $item) {
+            // There should not be sub menu items
+            $this->assertCount( 0, $item['submenu'] );
+        }
+    }
+
+    /**
+     * @test
+     * @expectedException InvalidDisplayLevels
+     */
+    public function shouldNotAllowDisplayLevelTwoWithoutPageSelection()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'display_levels' => 2,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+    }
+
+    /**
      * @param $aArray1
      * @param $aArray2
      * @return array

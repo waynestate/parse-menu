@@ -28,6 +28,9 @@ class ParseMenu {
         // Set the menu locally
         $this->menu = $menu;
 
+        // Set the default path
+        $this->path = array();
+
         // If a page should be selected
         if ( isset($config['page_selected']) ) {
             // Find the first occurrence of the page_id
@@ -49,7 +52,9 @@ class ParseMenu {
         $display = isset($config['display_levels']) ? (int)$config['display_levels'] : 0;
 
         // If there is a specified levels to display and it is smaller than the path
-        if ( $display > 0 && $display < ( count($this->path) - $skip ) ) {
+        if ( $display > 0 &&
+             ( count($this->path) == 0 || $display < ( count($this->path) - $skip ) )
+        ) {
             $this->menu = $this->menuSlice($this->menu, $display);
         }
 
@@ -136,13 +141,17 @@ class ParseMenu {
     {
         // If we have reached our start level
         if ( $level >= $start ) {
+
             // Return the rest of the menu
             return $menu;
         } else {
+
             // Loop through each menu item
             foreach ( $menu as $item ) {
+
                 // If there are sub menu items
                 if ( count($item['submenu']) > 0 ) {
+
                     // Dig deeper into the next level
                     return $this->sliceFromRoot( $item['submenu'], $start, ++ $level );
                 }
