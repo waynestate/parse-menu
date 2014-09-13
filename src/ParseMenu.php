@@ -41,7 +41,7 @@ class ParseMenu implements ParserInterface {
         // If a page should be selected
         if ( isset($config['page_selected']) ) {
             // Find the first occurrence of the page_id
-            $this->path = $this->findPath( $this->menu, (int) $config['page_selected'] );
+            $this->path = $this->findPath( $this->menu, (int)$config['page_selected'] );
 
             // Trim the non-needed limbs off the menu
             $this->menu = $this->trimMenu( $this->menu );
@@ -163,14 +163,14 @@ class ParseMenu implements ParserInterface {
         foreach ( $menu as $item ) {
 
             // If there are sub menu items
-            if ( count( $item['submenu'] ) > 0 ) {
+            if ( ! empty($item['submenu']) ) {
 
                 // Dig deeper into the next level
                 return $this->sliceFromRoot( $item['submenu'], $start, ++ $level );
             }
         }
 
-        // If the menu does not have 'submenu' array (edge case)
+        // If the menu does not have 'submenu' array (invalid $menu array format)
         return array();
     }
 
@@ -201,7 +201,7 @@ class ParseMenu implements ParserInterface {
             foreach ( $menu as $item ) {
 
                 // If there is a submenu
-                if ( count($item) > 0 ) {
+                if ( ! empty($item) ) {
 
                     // Dig deeper into the next level of the menu
                     $item['submenu'] = $this->menuSlice( $menu, $end, ++ $level );

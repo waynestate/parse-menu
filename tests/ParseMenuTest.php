@@ -258,7 +258,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         // Determine a page to be selected
         $config = array(
             'page_selected' => 10,
-            'skip_levels' => 1,
+            'skip_levels' => 2,
             'display_levels' => 1,
         );
 
