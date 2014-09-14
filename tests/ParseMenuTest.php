@@ -100,6 +100,14 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                     ),
                 ),
             ),
+            array(
+                'menu_item_id' => 10,
+                'menu_id' => 1,
+                'page_id' => 11,
+                'parent_id' => 0,
+                'display_name' => 'Third',
+                'submenu' => array(),
+            ),
         );
 
     }
@@ -250,7 +258,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         // Determine a page to be selected
         $config = array(
             'page_selected' => 10,
-            'skip_levels' => 1,
+            'skip_levels' => 2,
             'display_levels' => 1,
         );
 
@@ -324,6 +332,21 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                 $this->assertCount( 0, $item['submenu'] );
             }
         }
+    }
+
+    /**
+     * @test
+     * @expectedException Waynestate\Menuitems\InvalidSkipLevelsException
+     */
+    public function shouldNotAllowSkipMoreLevelsThanSelected() {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 7,
+            'skip_levels' => 2,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
     }
 
     /**
