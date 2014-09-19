@@ -218,7 +218,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
 
         // Loop through all main level items
         foreach ($parsed as $item) {
-            
+
             // If this item is in the path
             if ($item['is_selected']) {
                 // There should be sub menu items
