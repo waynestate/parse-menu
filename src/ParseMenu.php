@@ -54,7 +54,7 @@ class ParseMenu implements ParserInterface {
 
         // If there is a specified levels to display and it is smaller than the path
         if ( $display > 0 &&
-             ( count($this->path) == 0 || $display < ( count($this->path) - $skip ) )
+             ( count($this->path) == 0 || $display <= ( count($this->path) - $skip ) )
         ) {
             $this->menu = $this->menuSlice( $this->menu, $display );
         }
