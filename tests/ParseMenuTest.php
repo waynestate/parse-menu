@@ -209,7 +209,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
     {
         // Determine a page to be selected
         $config = array(
-            'page_selected' => 8,
+            'page_selected' => 5,
             'display_levels' => 2,
         );
 
@@ -218,10 +218,11 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
 
         // Loop through all main level items
         foreach ($parsed as $item) {
+            
             // If this item is in the path
             if ($item['is_selected']) {
                 // There should be sub menu items
-                $this->assertNotCount( 0, $item['submenu'] );
+                $this->assertGreaterThan( 0, count($item['submenu']) );
             } else {
                 // There should not be sub menu items
                 $this->assertCount( 0, $item['submenu'] );
