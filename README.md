@@ -8,18 +8,16 @@ Parse menus from the Wayne State University API
 [![Total Downloads](https://poser.pugx.org/waynestate/parse-menu/downloads.svg)](https://packagist.org/packages/waynestate/parse-menu)
 [![License](https://poser.pugx.org/waynestate/parse-menu/license.svg)](https://packagist.org/packages/waynestate/parse-menu)
 
-Usage
+
+Installation
 ------------
 
-Pull in with composer
+To install this library, run the command below and you will get the latest version
 
-    # composer.json
-
-    {
-        "require": {
-            "waynestate/parse-menu": "0.1.*"
-        }
-    }
+    composer require waynestate/parse-menu
+    
+Usage
+------------
 
 Create the object
 
