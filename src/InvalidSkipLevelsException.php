@@ -1,3 +1,5 @@
 <?php namespace Waynestate\Menuitems;
 
-class InvalidSkipLevelsException extends \Exception {}
+class InvalidSkipLevelsException extends \Exception
+{
+}

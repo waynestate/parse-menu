@@ -4,7 +4,8 @@ use Waynestate\Menuitems\ParseMenu;
 /**
  * Class ParseMenuTest
  */
-class ParseMenuTest extends PHPUnit_Framework_TestCase {
+class ParseMenuTest extends PHPUnit_Framework_TestCase
+{
     /**
      * @var
      */
@@ -109,7 +110,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                 'submenu' => array(),
             ),
         );
-
     }
 
     /**
@@ -176,8 +176,8 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Verify no main menu items have the is_selected flag
-        foreach ( $parsed as $item ) {
-            $this->assertFalse( $item['is_selected'] );
+        foreach ($parsed as $item) {
+            $this->assertFalse($item['is_selected']);
         }
     }
 
@@ -218,14 +218,13 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
 
         // Loop through all main level items
         foreach ($parsed as $item) {
-
             // If this item is in the path
             if ($item['is_selected']) {
                 // There should be sub menu items
-                $this->assertGreaterThan( 0, count($item['submenu']) );
+                $this->assertGreaterThan(0, count($item['submenu']));
             } else {
                 // There should not be sub menu items
-                $this->assertCount( 0, $item['submenu'] );
+                $this->assertCount(0, $item['submenu']);
             }
         }
     }
@@ -247,7 +246,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         // Loop through all main level items
         foreach ($parsed as $item) {
             // The parent_id of each of these items should not be the root '0' item
-            $this->assertNotEquals( 0, $item['parent_id'] );
+            $this->assertNotEquals(0, $item['parent_id']);
         }
     }
 
@@ -269,7 +268,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         // Loop through all main level items
         foreach ($parsed as $item) {
             // There should not be sub menu items
-            $this->assertCount( 0, $item['submenu'] );
+            $this->assertCount(0, $item['submenu']);
         }
     }
 
@@ -289,7 +288,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         // Loop through all main level items
         foreach ($parsed as $item) {
             // There should not be sub menu items
-            $this->assertCount( 0, $item['submenu'] );
+            $this->assertCount(0, $item['submenu']);
         }
     }
 
@@ -327,10 +326,10 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
             // If this item is in the path
             if ($item['is_selected']) {
                 // There should be sub menu items
-                $this->assertNotCount( 0, $item['submenu'] );
+                $this->assertNotCount(0, $item['submenu']);
             } else {
                 // There should not be sub menu items
-                $this->assertCount( 0, $item['submenu'] );
+                $this->assertCount(0, $item['submenu']);
             }
         }
     }
@@ -339,7 +338,8 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
      * @test
      * @expectedException Waynestate\Menuitems\InvalidSkipLevelsException
      */
-    public function shouldNotAllowSkipMoreLevelsThanSelected() {
+    public function shouldNotAllowSkipMoreLevelsThanSelected()
+    {
         // Determine a page to be selected
         $config = array(
             'page_selected' => 7,
@@ -355,14 +355,17 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
      * @param $aArray2
      * @return array
      */
-    protected function arrayRecursiveDiff($aArray1, $aArray2) {
+    protected function arrayRecursiveDiff($aArray1, $aArray2)
+    {
         $aReturn = array();
 
         foreach ($aArray1 as $mKey => $mValue) {
             if (array_key_exists($mKey, $aArray2)) {
                 if (is_array($mValue)) {
                     $aRecursiveDiff = $this->arrayRecursiveDiff($mValue, $aArray2[$mKey]);
-                    if (count($aRecursiveDiff)) { $aReturn[$mKey] = $aRecursiveDiff; }
+                    if (count($aRecursiveDiff)) {
+                        $aReturn[$mKey] = $aRecursiveDiff;
+                    }
                 } else {
                     if ($mValue != $aArray2[$mKey]) {
                         $aReturn[$mKey] = $mValue;
