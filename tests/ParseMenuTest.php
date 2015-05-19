@@ -148,6 +148,39 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function hasPageSelected()
+    {
+        // Determine a page to be selected
+        $config = array(
+            'page_selected' => 1
+        );
+
+        // Parse the menu based on the config
+        $this->parser->parse($this->menu, $config);
+
+        // Verify there is a menu item selected in the last parse()
+        $this->assertTrue($this->parser->hasSelected());
+    }
+
+    /**
+     * @test
+     */
+    public function doesNotHavePageSelected()
+    {
+        // Do not select a page
+        $config = array(
+        );
+
+        // Parse the menu based on the config
+        $this->parser->parse($this->menu, $config);
+
+        // There should not be a menu item selected in the last parse()
+        $this->assertFalse($this->parser->hasSelected());
+    }
+
+    /**
+     * @test
+     */
     public function trimNonSelectedMenus()
     {
         // Determine a page to be selected

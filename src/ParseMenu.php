@@ -11,14 +11,19 @@ use Waynestate\Menuitems\InvalidSkipLevelsException;
 class ParseMenu implements ParserInterface
 {
     /**
-     * @var
+     * @var array
      */
     protected $menu;
 
     /**
-     * @var
+     * @var array
      */
     protected $path = array();
+
+    /**
+     * @var boolean
+     */
+    protected $has_selected = false;
 
     /**
      * @param array $menu
@@ -31,6 +36,9 @@ class ParseMenu implements ParserInterface
     {
         // Set the menu locally
         $this->menu = $menu;
+
+        // Reset the selected state
+        $this->has_selected = false;
 
         // Set a default levels to skip from root
         $skip = isset($config['skip_levels']) ? (int)$config['skip_levels'] : 0;
@@ -61,6 +69,14 @@ class ParseMenu implements ParserInterface
 
         // The menu now has been modified with $config
         return $this->menu;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function hasSelected()
+    {
+        return $this->has_selected;
     }
 
     /**
@@ -117,6 +133,9 @@ class ParseMenu implements ParserInterface
             if (in_array($item['menu_item_id'], $this->path)) {
                 // This item should be in the selected path
                 $item['is_selected'] = true;
+
+                // Keep track that a selected menu item has been found
+                $this->has_selected = true;
 
                 // If there is a submenu trim it too
                 if (! empty($item['submenu'])) {
