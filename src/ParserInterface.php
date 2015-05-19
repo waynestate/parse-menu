@@ -12,4 +12,9 @@ interface ParserInterface
      * @return array
      */
     public function parse(array &$menu, array $config);
+
+    /**
+     * @return boolean
+     */
+    public function hasSelected();
 }

@@ -49,6 +49,9 @@ Make an API call for the menu
 
         // Get a final array to display the main menu
         $main_menu = $parseMenu->parse($menus[2], $menu_config);
+        
+        // Check if the page was found in the menu
+        $page_found = $parseMenu->hasSelected();
 
         // Just display the first level in the header
         $top_menu_config = array(
