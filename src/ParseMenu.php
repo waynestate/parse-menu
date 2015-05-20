@@ -11,14 +11,19 @@ use Waynestate\Menuitems\InvalidSkipLevelsException;
 class ParseMenu implements ParserInterface
 {
     /**
-     * @var
+     * @var array
      */
     protected $menu;
 
     /**
-     * @var
+     * @var array
      */
     protected $path = array();
+
+    /**
+     * @var array
+     */
+    protected $meta = array();
 
     /**
      * @param array $menu
@@ -31,6 +36,13 @@ class ParseMenu implements ParserInterface
     {
         // Set the menu locally
         $this->menu = $menu;
+
+        // Base meta information
+        $this->meta = array(
+            'has_selected' => false,
+            'depth' => 0,
+            'path' => $this->path,
+        );
 
         // Set a default levels to skip from root
         $skip = isset($config['skip_levels']) ? (int)$config['skip_levels'] : 0;
@@ -50,6 +62,9 @@ class ParseMenu implements ParserInterface
         // If there is a need to skip levels from the root
         if ($skip > 0) {
             $this->menu = $this->sliceFromRoot($this->menu, $skip);
+
+            // Trim the skip items from the path
+            $this->path = array_slice($this->path, 0, -1 * abs($skip));
         }
 
         // If there is a specified levels to display and it is smaller than the path
@@ -57,10 +72,20 @@ class ParseMenu implements ParserInterface
              (count($this->path) == 0 || $display <= (count($this->path) - $skip))
         ) {
             $this->menu = $this->menuSlice($this->menu, $display);
+
+            // Trim the non-display items from the path
+            $this->path = array_slice($this->path, (count($this->path) - $display));
         }
 
+        // Updated meta information
+        $this->meta['path'] = array_reverse($this->path);
+        $this->meta['depth'] = count($this->path);
+
         // The menu now has been modified with $config
-        return $this->menu;
+        return array(
+            'meta' => $this->meta,
+            'menu' => $this->menu,
+        );
     }
 
     /**
@@ -117,6 +142,9 @@ class ParseMenu implements ParserInterface
             if (in_array($item['menu_item_id'], $this->path)) {
                 // This item should be in the selected path
                 $item['is_selected'] = true;
+
+                // Set the meta information
+                $this->meta['has_selected'] = true;
 
                 // If there is a submenu trim it too
                 if (! empty($item['submenu'])) {
