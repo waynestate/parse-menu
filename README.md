@@ -62,7 +62,19 @@ Make an API call for the menu
 
         echo 'Caught exception: '.  $e->getMessage(). "\n";
     }
+    
+Return values
 
+    $main_menu['meta'] = [
+        'has_selected' => boolean, // default: false
+        'depth' => integer, // default: 0
+        'path' => array, // default: array()
+    ]
+    
+    $main_menu['menu'] = [
+        // Array of the menu
+    ]
+    
 Config Options
 
     'page_selected' = Page ID for selection path
