@@ -4,7 +4,8 @@ use Waynestate\Menuitems\ParseMenu;
 /**
  * Class ParseMenuTest
  */
-class ParseMenuTest extends PHPUnit_Framework_TestCase {
+class ParseMenuTest extends PHPUnit_Framework_TestCase
+{
     /**
      * @var
      */
@@ -109,7 +110,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
                 'submenu' => array(),
             ),
         );
-
     }
 
     /**
@@ -125,7 +125,11 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // There should be no different in the base and resulting array
-        $this->assertEmpty($this->arrayRecursiveDiff($parsed, $this->menu));
+        $this->assertEmpty($this->arrayRecursiveDiff($parsed['menu'], $this->menu));
+
+        // Meta information should be default
+        $this->assertFalse($parsed['meta']['has_selected']);
+        $this->assertEmpty($parsed['meta']['path']);
     }
 
     /**
@@ -142,7 +146,11 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Verify menu item has a boolean flag
-        $this->assertTrue($parsed[0]['is_selected']);
+        $this->assertTrue($parsed['menu'][0]['is_selected']);
+
+        // Verify meta information matches
+        $this->assertTrue($parsed['meta']['has_selected']);
+        $this->assertEquals(array(1), array_values($parsed['meta']['path']));
     }
 
     /**
@@ -159,7 +167,11 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Verify the first menu item no longer has submenu items to display
-        $this->assertCount(0, $parsed[0]['submenu']);
+        $this->assertCount(0, $parsed['menu'][0]['submenu']);
+
+        // Verify meta information matches
+        $this->assertTrue($parsed['meta']['has_selected']);
+        $this->assertEquals(array(2, 7), array_values($parsed['meta']['path']));
     }
 
     /**
@@ -176,9 +188,12 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Verify no main menu items have the is_selected flag
-        foreach ( $parsed as $item ) {
-            $this->assertFalse( $item['is_selected'] );
+        foreach ($parsed['menu'] as $item) {
+            $this->assertFalse($item['is_selected']);
         }
+
+        $this->assertFalse($parsed['meta']['has_selected']);
+        $this->assertEmpty($parsed['meta']['path']);
     }
 
     /**
@@ -196,10 +211,13 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Loop through all main level items
-        foreach ($parsed as $item) {
+        foreach ($parsed['menu'] as $item) {
             // Ensure each main item no longer has sub menu items
             $this->assertCount(0, $item['submenu']);
         }
+
+        $this->assertTrue($parsed['meta']['has_selected']);
+        $this->assertEquals(array(2), array_values($parsed['meta']['path']));
     }
 
     /**
@@ -217,17 +235,19 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Loop through all main level items
-        foreach ($parsed as $item) {
-
+        foreach ($parsed['menu'] as $item) {
             // If this item is in the path
             if ($item['is_selected']) {
                 // There should be sub menu items
-                $this->assertGreaterThan( 0, count($item['submenu']) );
+                $this->assertGreaterThan(0, count($item['submenu']));
             } else {
                 // There should not be sub menu items
-                $this->assertCount( 0, $item['submenu'] );
+                $this->assertCount(0, $item['submenu']);
             }
         }
+
+        $this->assertTrue($parsed['meta']['has_selected']);
+        $this->assertEquals(array(1, 4), array_values($parsed['meta']['path']));
     }
 
     /**
@@ -245,10 +265,13 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Loop through all main level items
-        foreach ($parsed as $item) {
+        foreach ($parsed['menu'] as $item) {
             // The parent_id of each of these items should not be the root '0' item
-            $this->assertNotEquals( 0, $item['parent_id'] );
+            $this->assertNotEquals(0, $item['parent_id']);
         }
+
+        $this->assertTrue($parsed['meta']['has_selected']);
+        $this->assertEquals(array(4), array_values($parsed['meta']['path']));
     }
 
     /**
@@ -267,10 +290,13 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Loop through all main level items
-        foreach ($parsed as $item) {
+        foreach ($parsed['menu'] as $item) {
             // There should not be sub menu items
-            $this->assertCount( 0, $item['submenu'] );
+            $this->assertCount(0, $item['submenu']);
         }
+
+        $this->assertTrue($parsed['meta']['has_selected']);
+        $this->assertEquals(array(9), array_values($parsed['meta']['path']));
     }
 
     /**
@@ -287,10 +313,13 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Loop through all main level items
-        foreach ($parsed as $item) {
+        foreach ($parsed['menu'] as $item) {
             // There should not be sub menu items
-            $this->assertCount( 0, $item['submenu'] );
+            $this->assertCount(0, $item['submenu']);
         }
+
+        $this->assertFalse($parsed['meta']['has_selected']);
+        $this->assertEmpty($parsed['meta']['path']);
     }
 
     /**
@@ -323,23 +352,27 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Loop through all main level items
-        foreach ($parsed as $item) {
+        foreach ($parsed['menu'] as $item) {
             // If this item is in the path
             if ($item['is_selected']) {
                 // There should be sub menu items
-                $this->assertNotCount( 0, $item['submenu'] );
+                $this->assertNotCount(0, $item['submenu']);
             } else {
                 // There should not be sub menu items
-                $this->assertCount( 0, $item['submenu'] );
+                $this->assertCount(0, $item['submenu']);
             }
         }
+
+        $this->assertTrue($parsed['meta']['has_selected']);
+        $this->assertEquals(array(1, 3), array_values($parsed['meta']['path']));
     }
 
     /**
      * @test
      * @expectedException Waynestate\Menuitems\InvalidSkipLevelsException
      */
-    public function shouldNotAllowSkipMoreLevelsThanSelected() {
+    public function shouldNotAllowSkipMoreLevelsThanSelected()
+    {
         // Determine a page to be selected
         $config = array(
             'page_selected' => 7,
@@ -355,14 +388,17 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase {
      * @param $aArray2
      * @return array
      */
-    protected function arrayRecursiveDiff($aArray1, $aArray2) {
+    protected function arrayRecursiveDiff($aArray1, $aArray2)
+    {
         $aReturn = array();
 
         foreach ($aArray1 as $mKey => $mValue) {
             if (array_key_exists($mKey, $aArray2)) {
                 if (is_array($mValue)) {
                     $aRecursiveDiff = $this->arrayRecursiveDiff($mValue, $aArray2[$mKey]);
-                    if (count($aRecursiveDiff)) { $aReturn[$mKey] = $aRecursiveDiff; }
+                    if (count($aRecursiveDiff)) {
+                        $aReturn[$mKey] = $aRecursiveDiff;
+                    }
                 } else {
                     if ($mValue != $aArray2[$mKey]) {
                         $aReturn[$mKey] = $mValue;

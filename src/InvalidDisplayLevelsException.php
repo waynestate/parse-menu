@@ -1,3 +1,5 @@
 <?php namespace Waynestate\Menuitems;
 
-class InvalidDisplayLevelsException extends \Exception {}
+class InvalidDisplayLevelsException extends \Exception
+{
+}
