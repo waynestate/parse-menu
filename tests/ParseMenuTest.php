@@ -129,7 +129,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
 
         // Meta information should be default
         $this->assertFalse($parsed['meta']['has_selected']);
-        $this->assertEquals(0, $parsed['meta']['depth']);
         $this->assertEmpty($parsed['meta']['path']);
     }
 
@@ -151,7 +150,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
 
         // Verify meta information matches
         $this->assertTrue($parsed['meta']['has_selected']);
-        $this->assertEquals(1, $parsed['meta']['depth']);
         $this->assertEquals(array(1), array_values($parsed['meta']['path']));
     }
 
@@ -173,7 +171,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
 
         // Verify meta information matches
         $this->assertTrue($parsed['meta']['has_selected']);
-        $this->assertEquals(2, $parsed['meta']['depth']);
         $this->assertEquals(array(2, 7), array_values($parsed['meta']['path']));
     }
 
@@ -196,7 +193,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertFalse($parsed['meta']['has_selected']);
-        $this->assertEquals(0, $parsed['meta']['depth']);
         $this->assertEmpty($parsed['meta']['path']);
     }
 
@@ -221,7 +217,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($parsed['meta']['has_selected']);
-        $this->assertEquals(1, $parsed['meta']['depth']);
         $this->assertEquals(array(2), array_values($parsed['meta']['path']));
     }
 
@@ -252,7 +247,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($parsed['meta']['has_selected']);
-        $this->assertEquals(2, $parsed['meta']['depth']);
         $this->assertEquals(array(1, 4), array_values($parsed['meta']['path']));
     }
 
@@ -277,7 +271,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($parsed['meta']['has_selected']);
-        $this->assertEquals(1, $parsed['meta']['depth']);
         $this->assertEquals(array(4), array_values($parsed['meta']['path']));
     }
 
@@ -303,7 +296,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($parsed['meta']['has_selected']);
-        $this->assertEquals(1, $parsed['meta']['depth']);
         $this->assertEquals(array(9), array_values($parsed['meta']['path']));
     }
 
@@ -327,7 +319,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertFalse($parsed['meta']['has_selected']);
-        $this->assertEquals(0, $parsed['meta']['depth']);
         $this->assertEmpty($parsed['meta']['path']);
     }
 
@@ -373,7 +364,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         }
 
         $this->assertTrue($parsed['meta']['has_selected']);
-        $this->assertEquals(2, $parsed['meta']['depth']);
         $this->assertEquals(array(1, 3), array_values($parsed['meta']['path']));
     }
 
