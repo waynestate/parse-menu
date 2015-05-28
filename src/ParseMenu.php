@@ -40,7 +40,6 @@ class ParseMenu implements ParserInterface
         // Base meta information
         $this->meta = array(
             'has_selected' => false,
-            'depth' => 0,
             'path' => $this->path,
         );
 
@@ -79,7 +78,6 @@ class ParseMenu implements ParserInterface
 
         // Updated meta information
         $this->meta['path'] = array_reverse($this->path);
-        $this->meta['depth'] = count($this->path);
 
         // The menu now has been modified with $config
         return array(
