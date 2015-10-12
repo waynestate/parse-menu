@@ -40,6 +40,7 @@ class ParseMenu implements ParserInterface
         // Base meta information
         $this->meta = array(
             'has_selected' => false,
+            'has_submenu' => false,
             'path' => $this->path,
         );
 
