@@ -80,6 +80,12 @@ class ParseMenu implements ParserInterface
         // Updated meta information
         $this->meta['path'] = array_reverse($this->path);
 
+        // If there is a selected item
+        if ($this->meta['has_selected']) {
+            // Check to see if there are any active submenu items
+            $this->meta['has_submenu'] = $this->hasSubMenu(current($this->meta['path']));
+        }
+
         // The menu now has been modified with $config
         return array(
             'meta' => $this->meta,
@@ -232,5 +238,35 @@ class ParseMenu implements ParserInterface
 
         // Should never get to this point
         return $slice_menu;
+    }
+
+    /**
+     * Determine if the top level of a selected path has a submenu to display
+     *
+     * @param $menu_item_id
+     * @return bool
+     */
+    protected function hasSubMenu($menu_item_id)
+    {
+        // Submenu always available with a path > 1
+        if (count($this->meta['path']) > 1)
+            return true;
+
+        // Decide if the first level menu has any visible submenu items
+        foreach ($this->menu as $item) {
+            // Find the desired menu item in the first level
+            if ($item['menu_item_id'] == $menu_item_id) {
+                // Loop through each submenu item
+                foreach ($item['submenu'] as $sub_item) {
+                    // If there is at least one active item
+                    if ($sub_item['is_active'] == true) {
+                        // There is a submenu to display
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 }

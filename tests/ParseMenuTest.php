@@ -400,7 +400,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
     {
         // Ensure the page selected should not have a sub menu
         $config = array(
-            'page_selected' => 9,
+            'page_selected' => 11,
         );
 
         // Parse the menu based on the config
@@ -430,7 +430,24 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function shouldHaveSubMenu()
+    public function shouldHaveSubMenuAtLevelOne()
+    {
+        // Ensure the page selected should not have a sub menu
+        $config = array(
+            'page_selected' => 1,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // This page should not have a submenu
+        $this->assertTrue($parsed['meta']['has_submenu']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldHaveSubMenuAtInteriorLevel()
     {
         // Ensure the page selected should not have a sub menu
         $config = array(
