@@ -31,6 +31,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                 'menu_id' => 1,
                 'page_id' => 1,
                 'parent_id' => 0,
+                'is_active' => true,
                 'display_name' => 'First',
                 'submenu' => array(
                     array(
@@ -38,6 +39,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                         'menu_id' => 1,
                         'page_id' => 4,
                         'parent_id' => 1,
+                        'is_active' => true,
                         'display_name' => 'Nest One',
                         'submenu' => array(),
                     ),
@@ -46,6 +48,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                         'menu_id' => 1,
                         'page_id' => 5,
                         'parent_id' => 1,
+                        'is_active' => true,
                         'display_name' => 'Nest Two',
                         'submenu' => array(),
                     ),
@@ -54,6 +57,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                         'menu_id' => 1,
                         'page_id' => 6,
                         'parent_id' => 1,
+                        'is_active' => true,
                         'display_name' => 'Nest Three',
                         'submenu' => array(
                             array(
@@ -61,6 +65,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                                 'menu_id' => 1,
                                 'page_id' => 9,
                                 'parent_id' => 5,
+                                'is_active' => true,
                                 'display_name' => 'Nest Nest One',
                                 'submenu' => array(),
                             ),
@@ -69,6 +74,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                                 'menu_id' => 1,
                                 'page_id' => 10,
                                 'parent_id' => 5,
+                                'is_active' => true,
                                 'display_name' => 'Nest Nest Two',
                                 'submenu' => array(),
                             ),
@@ -81,6 +87,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                 'menu_id' => 1,
                 'page_id' => 2,
                 'parent_id' => 0,
+                'is_active' => true,
                 'display_name' => 'Second',
                 'submenu' => array(
                     array(
@@ -88,6 +95,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                         'menu_id' => 1,
                         'page_id' => 7,
                         'parent_id' => 2,
+                        'is_active' => false,
                         'display_name' => 'Two Nest One',
                         'submenu' => array(),
                     ),
@@ -96,6 +104,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                         'menu_id' => 1,
                         'page_id' => 8,
                         'parent_id' => 2,
+                        'is_active' => false,
                         'display_name' => 'Two Nest Two',
                         'submenu' => array(),
                     ),
@@ -106,6 +115,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                 'menu_id' => 1,
                 'page_id' => 11,
                 'parent_id' => 0,
+                'is_active' => true,
                 'display_name' => 'Third',
                 'submenu' => array(),
             ),
@@ -381,6 +391,74 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
 
         // Parse the menu based on the config
         $parsed = $this->parser->parse($this->menu, $config);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNotHaveSubMenuWithNoItems()
+    {
+        // Ensure the page selected should not have a sub menu
+        $config = array(
+            'page_selected' => 11,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // This page should not have a submenu
+        $this->assertFalse($parsed['meta']['has_submenu']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNotHaveSubMenuWithInactiveItems()
+    {
+        // Ensure the page selected should not have a sub menu
+        $config = array(
+            'page_selected' => 2,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // This page should not have a submenu
+        $this->assertFalse($parsed['meta']['has_submenu']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldHaveSubMenuAtLevelOne()
+    {
+        // Ensure the page selected should not have a sub menu
+        $config = array(
+            'page_selected' => 1,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // This page should not have a submenu
+        $this->assertTrue($parsed['meta']['has_submenu']);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldHaveSubMenuAtInteriorLevel()
+    {
+        // Ensure the page selected should not have a sub menu
+        $config = array(
+            'page_selected' => 6,
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // This page should not have a submenu
+        $this->assertTrue($parsed['meta']['has_submenu']);
     }
 
     /**

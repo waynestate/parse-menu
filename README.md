@@ -67,6 +67,7 @@ Return values
 
     $main_menu['meta'] = [
         'has_selected' => boolean, // default: false
+        'has_submenu' => boolean, // default: false
         'depth' => integer, // default: 0
         'path' => array, // default: array()
     ]
