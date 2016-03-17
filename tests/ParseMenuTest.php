@@ -135,7 +135,11 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $parsed = $this->parser->parse($this->menu, $config);
 
         foreach($parsed['menu'] as $item) {
+            // No sub menus should be found
             $this->assertCount(0, $item['submenu']);
+
+            // is_selected should be applied to all menu items
+            $this->assertArrayHasKey('is_selected', $item);
         }
 
         // Meta information should be default
@@ -202,7 +206,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         // Verify the first menu item no longer has submenu items to display
         $this->assertCount(count($this->menu[0]['submenu']), $selected_menu['menu'][0]['submenu']);
 
-
         // No configuration options
         $config = array(
             'full_menu' => true,
@@ -235,25 +238,6 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($parsed['meta']['has_selected']);
         $this->assertEmpty($parsed['meta']['path']);
-    }
-
-    /**
-     * @test
-     */
-    public function isSelectedKeyExistsOnNoPageSelectedConfig()
-    {
-        // Determine a page to be selected
-        $config = array(
-            //'page_selected' => 999
-        );
-
-        // Parse the menu based on the config
-        $parsed = $this->parser->parse($this->menu, $config);
-
-        // Verify no main menu items have the is_selected flag
-        foreach ($parsed['menu'] as $item) {
-            $this->assertArrayHasKey('is_selected', $item);
-        }
     }
 
     /**
