@@ -54,7 +54,12 @@ class ParseMenu implements ParserInterface
         if (isset($config['page_selected'])) {
             // Find the first occurrence of the page_id
             $this->path = $this->findPath($this->menu, (int)$config['page_selected']);
+        }
 
+        // Add menu item additional information
+        $this->menu = $this->setSelected($this->menu);
+
+        if (! isset($config['full_menu']) || $config['full_menu'] == false) {
             // Trim the non-needed limbs off the menu
             $this->menu = $this->trimMenu($this->menu);
         }
@@ -140,16 +145,9 @@ class ParseMenu implements ParserInterface
 
         // Loop through each menu item
         foreach ($menu as $item) {
-            // Default each menu item to not-selected
-            $item['is_selected'] = false;
 
             // If this menu item is found in the path
             if (in_array($item['menu_item_id'], $this->path)) {
-                // This item should be in the selected path
-                $item['is_selected'] = true;
-
-                // Set the meta information
-                $this->meta['has_selected'] = true;
 
                 // If there is a submenu trim it too
                 if (! empty($item['submenu'])) {
@@ -268,5 +266,40 @@ class ParseMenu implements ParserInterface
         }
 
         return false;
+    }
+
+    /**
+     * @param array $menu
+     * @return array
+     */
+    private function setSelected(array $menu)
+    {
+        // Start with the blank new menu
+        $full_menu = array();
+
+        // Loop through each menu item
+        foreach ($menu as $item) {
+            // Default each menu item to not-selected
+            $item['is_selected'] = false;
+
+            // If this menu item is found in the path
+            if (in_array($item['menu_item_id'], $this->path)) {
+                // This item should be in the selected path
+                $item['is_selected'] = true;
+
+                // Set the meta information
+                $this->meta['has_selected'] = true;
+            }
+
+            // If there is a sub menu, setSelected state on those items
+            if (!empty($item['submenu'])) {
+                $item['submenu'] = $this->setSelected($item['submenu']);
+            }
+
+            // Add this item into the menu being formed
+            $full_menu[] = $item;
+        }
+
+        return $full_menu;
     }
 }
