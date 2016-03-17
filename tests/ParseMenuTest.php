@@ -125,7 +125,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function noConfigNoChange()
+    public function noConfigWillTrimAllButFirstLevel()
     {
         // No configuration options
         $config = array(
@@ -134,8 +134,9 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         // Parse the menu
         $parsed = $this->parser->parse($this->menu, $config);
 
-        // There should be no different in the base and resulting array
-        $this->assertEmpty($this->arrayRecursiveDiff($parsed['menu'], $this->menu));
+        foreach($parsed['menu'] as $item) {
+            $this->assertCount(0, $item['submenu']);
+        }
 
         // Meta information should be default
         $this->assertFalse($parsed['meta']['has_selected']);
@@ -187,6 +188,36 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function noPageSelectedShouldReturnFullMenu()
+    {
+        // No configuration options
+        $config = array(
+            'page_selected' => 8,
+            'full_menu' => true,
+        );
+
+        // Parse the menu
+        $selected_menu = $this->parser->parse($this->menu, $config);
+
+        // Verify the first menu item no longer has submenu items to display
+        $this->assertCount(count($this->menu[0]['submenu']), $selected_menu['menu'][0]['submenu']);
+
+
+        // No configuration options
+        $config = array(
+            'full_menu' => true,
+        );
+
+        // Parse the menu
+        $full_menu = $this->parser->parse($this->menu, $config);
+
+        // Verify the first menu item no longer has submenu items to display
+        $this->assertCount(count($this->menu[0]['submenu']), $full_menu['menu'][0]['submenu']);
+    }
+
+    /**
+     * @test
+     */
     public function pageNotFoundAndNothingSelected()
     {
         // Determine a page to be selected
@@ -204,6 +235,25 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($parsed['meta']['has_selected']);
         $this->assertEmpty($parsed['meta']['path']);
+    }
+
+    /**
+     * @test
+     */
+    public function isSelectedKeyExistsOnNoPageSelectedConfig()
+    {
+        // Determine a page to be selected
+        $config = array(
+            //'page_selected' => 999
+        );
+
+        // Parse the menu based on the config
+        $parsed = $this->parser->parse($this->menu, $config);
+
+        // Verify no main menu items have the is_selected flag
+        foreach ($parsed['menu'] as $item) {
+            $this->assertArrayHasKey('is_selected', $item);
+        }
     }
 
     /**

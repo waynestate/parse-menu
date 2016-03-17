@@ -78,9 +78,10 @@ Return values
     
 Config Options
 
-    'page_selected' = Page ID for selection path
+    'page_selected' = Page ID for selection path (optional)
     'skip_levels' = Number of levels to skip from the root (requires page_selected)
     'display_levels' = Number of levels to display from the root (requires page_selected, if > 1)
+    'full_menu' = Return the full menu regardless if there is a page selected (boolean, default: false)
     TODO: 'show_levels' = Number of levels to display from the leaf (requires page_selected)
     TODO: 'add_home' = Add 'Home' as the first menu item (this may not be needed)
 
