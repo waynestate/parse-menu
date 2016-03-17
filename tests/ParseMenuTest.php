@@ -125,7 +125,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function noConfigNoChange()
+    public function noConfigWillTrimAllButFirstLevel()
     {
         // No configuration options
         $config = array(
@@ -134,8 +134,13 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         // Parse the menu
         $parsed = $this->parser->parse($this->menu, $config);
 
-        // There should be no different in the base and resulting array
-        $this->assertEmpty($this->arrayRecursiveDiff($parsed['menu'], $this->menu));
+        foreach($parsed['menu'] as $item) {
+            // No sub menus should be found
+            $this->assertCount(0, $item['submenu']);
+
+            // is_selected should be applied to all menu items
+            $this->assertArrayHasKey('is_selected', $item);
+        }
 
         // Meta information should be default
         $this->assertFalse($parsed['meta']['has_selected']);
@@ -182,6 +187,35 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         // Verify meta information matches
         $this->assertTrue($parsed['meta']['has_selected']);
         $this->assertEquals(array(2, 7), array_values($parsed['meta']['path']));
+    }
+
+    /**
+     * @test
+     */
+    public function noPageSelectedShouldReturnFullMenu()
+    {
+        // No configuration options
+        $config = array(
+            'page_selected' => 8,
+            'full_menu' => true,
+        );
+
+        // Parse the menu
+        $selected_menu = $this->parser->parse($this->menu, $config);
+
+        // Verify the first menu item no longer has submenu items to display
+        $this->assertCount(count($this->menu[0]['submenu']), $selected_menu['menu'][0]['submenu']);
+
+        // No configuration options
+        $config = array(
+            'full_menu' => true,
+        );
+
+        // Parse the menu
+        $full_menu = $this->parser->parse($this->menu, $config);
+
+        // Verify the first menu item no longer has submenu items to display
+        $this->assertCount(count($this->menu[0]['submenu']), $full_menu['menu'][0]['submenu']);
     }
 
     /**
