@@ -268,6 +268,10 @@ class ParseMenu implements ParserInterface
         return false;
     }
 
+    /**
+     * @param array $menu
+     * @return array
+     */
     private function setSelected(array $menu)
     {
         // Start with the blank new menu
@@ -287,12 +291,12 @@ class ParseMenu implements ParserInterface
                 $this->meta['has_selected'] = true;
             }
 
-            // If there is a submenu trim it too
+            // If there is a sub menu, setSelected state on those items
             if (!empty($item['submenu'])) {
                 $item['submenu'] = $this->setSelected($item['submenu']);
             }
 
-            // Add this item to the newly trimmed menu
+            // Add this item into the menu being formed
             $full_menu[] = $item;
         }
 
