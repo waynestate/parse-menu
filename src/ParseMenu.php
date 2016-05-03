@@ -159,7 +159,7 @@ class ParseMenu implements ParserInterface
             }
 
             // Add this item to the newly trimmed menu
-            $path_menu[] = $item;
+            $path_menu[$item['menu_item_id']] = $item;
         }
 
         // Return the trimmed menu
@@ -230,7 +230,7 @@ class ParseMenu implements ParserInterface
                 }
 
                 // If in bounds, add the item to the new menu
-                $slice_menu[] = $item;
+                $slice_menu[$item['menu_item_id']] = $item;
             }
         }
 
@@ -297,7 +297,7 @@ class ParseMenu implements ParserInterface
             }
 
             // Add this item into the menu being formed
-            $full_menu[] = $item;
+            $full_menu[$item['menu_item_id']] = $item;
         }
 
         return $full_menu;
