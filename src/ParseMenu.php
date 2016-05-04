@@ -102,12 +102,13 @@ class ParseMenu implements ParserInterface
      * @param $menu
      * @return mixed
      */
-    public function getBreadCrumbs($menu){
+    public function getBreadCrumbs($menu)
+    {
         $breadcrumbs = [];
 
-        foreach($menu['meta']['path'] as $menu_item_id){
+        foreach ($menu['meta']['path'] as $menu_item_id) {
             $array_path[] = array_shift($menu['meta']['path']);
-            $crumb = array_get($menu['menu'], implode('.submenu.', $array_path));
+            $crumb = static::array_get($menu['menu'], implode('.submenu.', $array_path));
             $crumb['submenu'] = null;
             $breadcrumbs[] = $crumb;
         }
@@ -318,5 +319,33 @@ class ParseMenu implements ParserInterface
         }
 
         return $full_menu;
+    }
+
+    /**
+     * Get an item from an array using "dot" notation.
+     *
+     * @param  string $key
+     * @param  mixed $default
+     * @return mixed
+     */
+    private static function array_get($array, $key, $default = null)
+    {
+        if (!is_array($array)) {
+            return value($default);
+        }
+        if (is_null($key)) {
+            return $array;
+        }
+        if (array_key_exists($key, $array)) {
+            return $array[$key];
+        }
+        foreach (explode('.', $key) as $segment) {
+            if (is_array($array) && array_key_exists($segment, $array)) {
+                $array = $array[$segment];
+            } else {
+                return value($default);
+            }
+        }
+        return $array;
     }
 }
