@@ -161,7 +161,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Verify menu item has a boolean flag
-        $this->assertTrue($parsed['menu'][0]['is_selected']);
+        $this->assertTrue($parsed['menu'][1]['is_selected']);
 
         // Verify meta information matches
         $this->assertTrue($parsed['meta']['has_selected']);
@@ -182,7 +182,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Verify the first menu item no longer has submenu items to display
-        $this->assertCount(0, $parsed['menu'][0]['submenu']);
+        $this->assertCount(0, $parsed['menu'][1]['submenu']);
 
         // Verify meta information matches
         $this->assertTrue($parsed['meta']['has_selected']);
@@ -204,7 +204,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $selected_menu = $this->parser->parse($this->menu, $config);
 
         // Verify the first menu item no longer has submenu items to display
-        $this->assertCount(count($this->menu[0]['submenu']), $selected_menu['menu'][0]['submenu']);
+        $this->assertCount(count($this->menu[0]['submenu']), $selected_menu['menu'][1]['submenu']);
 
         // No configuration options
         $config = array(
@@ -215,7 +215,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $full_menu = $this->parser->parse($this->menu, $config);
 
         // Verify the first menu item no longer has submenu items to display
-        $this->assertCount(count($this->menu[0]['submenu']), $full_menu['menu'][0]['submenu']);
+        $this->assertCount(count($this->menu[0]['submenu']), $full_menu['menu'][1]['submenu']);
     }
 
     /**
