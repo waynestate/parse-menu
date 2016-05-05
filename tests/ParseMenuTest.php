@@ -260,7 +260,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
-    public function breadcrumbsKeysShouldBeInPath()
+    public function breadcrumbsMenuItemIDShouldBeInPath()
     {
         // No configuration options
         $config = array(
@@ -272,7 +272,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
 
         // # of breadcrumbs in $breadcrumbs is the same as the parsed path count
         foreach((array)$breadcrumbs as $key => $crumb){
-            $this->assertArrayHasKey($key, $parsed['meta']['path']);
+            $this->assertContains($crumb['menu_item_id'], $parsed['meta']['path']);
         }
     }
 
