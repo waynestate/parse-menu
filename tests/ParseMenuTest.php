@@ -245,7 +245,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
      */
     public function breadcrumbsShouldMatchPathCount()
     {
-        // No configuration options
+        // Set a selected page
         $config = array(
             'page_selected' => 9,
         );
@@ -262,7 +262,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
      */
     public function breadcrumbsMenuItemIDShouldBeInPath()
     {
-        // No configuration options
+        // Set a selected page
         $config = array(
             'page_selected' => 9,
         );
@@ -281,7 +281,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
      */
     public function prependBreadCrumbsShouldAddBreadCrumb()
     {
-        // No configuration options
+        // Set a selected page
         $config = array(
             'page_selected' => 9,
         );
@@ -289,6 +289,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $parsed = $this->parser->parse($this->menu, $config);
         $breadcrumbs = $this->parser->getBreadCrumbs($parsed);
 
+        // Create crumb for the root
         $root_crumb = array(
                 'menu_item_id' => 11,
                 'menu_id' => 1,
@@ -299,6 +300,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                 'submenu' => null
         );
 
+        // Get the breadcrumbs with the added crumb
         $breadcrumbs = $this->parser->prependBreadCrumb($breadcrumbs, $root_crumb);
 
         $this->assertEquals($breadcrumbs[0], $root_crumb);
