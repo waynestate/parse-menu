@@ -98,6 +98,20 @@ class ParseMenu implements ParserInterface
         );
     }
 
+
+    /**
+     * @param $breadcrumbs
+     * @param $menu_item
+     * @return mixed
+     */
+    public function prependBreadCrumb($breadcrumbs, $menu_item)
+    {
+        // add menu_item to the breadcrumbs array and return it
+        array_unshift($breadcrumbs, $menu_item);
+
+        return $breadcrumbs;
+    }
+
     /**
      * @param $menu
      * @return mixed
@@ -105,8 +119,9 @@ class ParseMenu implements ParserInterface
     public function getBreadCrumbs($menu)
     {
         $breadcrumbs = array();
+
         foreach ((array)$menu['meta']['path'] as $menu_item_id) {
-            $array_path[] = array_shift($menu['meta']['path']);
+            $array_path[] = $menu_item_id;
             $crumb = static::array_get($menu['menu'], implode('.submenu.', $array_path));
             $crumb['submenu'] = null;
             $breadcrumbs[] = $crumb;

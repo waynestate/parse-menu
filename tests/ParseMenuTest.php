@@ -279,6 +279,34 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function prependBreadCrumbsShouldAddBreadCrumb()
+    {
+        // No configuration options
+        $config = array(
+            'page_selected' => 9,
+        );
+
+        $parsed = $this->parser->parse($this->menu, $config);
+        $breadcrumbs = $this->parser->getBreadCrumbs($parsed);
+
+        $root_crumb = array(
+                'menu_item_id' => 11,
+                'menu_id' => 1,
+                'page_id' => 11,
+                'parent_id' => 0,
+                'is_active' => true,
+                'display_name' => 'BreadCrumb',
+                'submenu' => null
+        );
+
+        $breadcrumbs = $this->parser->prependBreadCrumb($breadcrumbs, $root_crumb);
+
+        $this->assertEquals($breadcrumbs[0], $root_crumb);
+    }
+
+    /**
+     * @test
+     */
     public function shouldLimitToOneLevelDeep()
     {
         // Determine a page to be selected
