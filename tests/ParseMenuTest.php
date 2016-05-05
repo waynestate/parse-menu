@@ -243,6 +243,42 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function breadcrumbsShouldMatchPathCount()
+    {
+        // No configuration options
+        $config = array(
+            'page_selected' => 9,
+        );
+
+        $parsed = $this->parser->parse($this->menu, $config);
+        $breadcrumbs = $this->parser->getBreadCrumbs($parsed);
+
+        // # of breadcrumbs in $breadcrumbs is the same as the parsed path count
+        $this->assertCount(count($parsed['meta']['path']), $breadcrumbs);
+    }
+
+    /**
+     * @test
+     */
+    public function breadcrumbsKeysShouldBeInPath()
+    {
+        // No configuration options
+        $config = array(
+            'page_selected' => 9,
+        );
+
+        $parsed = $this->parser->parse($this->menu, $config);
+        $breadcrumbs = $this->parser->getBreadCrumbs($parsed);
+
+        // # of breadcrumbs in $breadcrumbs is the same as the parsed path count
+        foreach((array)$breadcrumbs as $key => $crumb){
+            $this->assertArrayHasKey($key, $parsed['meta']['path']);
+        }
+    }
+
+    /**
+     * @test
+     */
     public function shouldLimitToOneLevelDeep()
     {
         // Determine a page to be selected
