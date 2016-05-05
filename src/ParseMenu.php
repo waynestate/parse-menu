@@ -104,7 +104,7 @@ class ParseMenu implements ParserInterface
      */
     public function getBreadCrumbs($menu)
     {
-        $breadcrumbs = [];
+        $breadcrumbs = array();
         foreach ((array)$menu['meta']['path'] as $menu_item_id) {
             $array_path[] = array_shift($menu['meta']['path']);
             $crumb = static::array_get($menu['menu'], implode('.submenu.', $array_path));
