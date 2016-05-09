@@ -49,7 +49,20 @@ Make an API call for the menu
 
         // Get a final array to display the main menu
         $main_menu = $parseMenu->parse($menus[2], $menu_config);
-
+        
+        // Get the breadcrumbs from the parsed menu $main_menu
+        $breadcrumbs = array();
+        if(count($site_menu['meta']['path']) > 0) {
+            $breadcrumbs = $parseMenu->getBreadCrumbs($main_menu);
+            
+            // Add the site root crumb
+            $root_crumb = [
+                'display_name' => 'Home',
+                'relative_url' => '/',
+            ];
+            $breadcrumbs = $parseMenu->prependBreadCrumb($breadcrumbs, $root_crumb);
+        }
+        
         // Just display the first level in the header
         $top_menu_config = array(
             'display_levels' => 1,
@@ -74,6 +87,10 @@ Return values
     
     $main_menu['menu'] = [
         // Array of the menu
+    ]
+    
+    $breadcrumbs = [
+        // Sequential array of individual breadcrumbs in order based on the $main_menu['meta']['path']
     ]
     
 Config Options
