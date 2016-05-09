@@ -1,6 +1,6 @@
 {
     "name": "waynestate/parse-menu",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "type": "library",
     "description": "Parse menus from the Wayne State University API",
     "keywords": ["array","parser"],
