@@ -98,6 +98,39 @@ class ParseMenu implements ParserInterface
         );
     }
 
+
+    /**
+     * @param $breadcrumbs
+     * @param $menu_item
+     * @return mixed
+     */
+    public function prependBreadCrumb($breadcrumbs, $menu_item)
+    {
+        // add menu_item to the breadcrumbs array and return it
+        array_unshift($breadcrumbs, $menu_item);
+
+        return $breadcrumbs;
+    }
+
+    /**
+     * @param $menu
+     * @return mixed
+     */
+    public function getBreadCrumbs($menu)
+    {
+        $breadcrumbs = array();
+
+        // Loop through the path array and pull out each of the menu_item_ids from within the $menu['menu'] array
+        foreach ((array)$menu['meta']['path'] as $menu_item_id) {
+            $array_path[] = $menu_item_id;
+            $crumb = static::array_get($menu['menu'], implode('.submenu.', $array_path));
+            $crumb['submenu'] = array();
+            $breadcrumbs[] = $crumb;
+        }
+
+        return $breadcrumbs;
+    }
+
     /**
      * @param array $menu
      * @param $page_id
@@ -159,7 +192,7 @@ class ParseMenu implements ParserInterface
             }
 
             // Add this item to the newly trimmed menu
-            $path_menu[] = $item;
+            $path_menu[$item['menu_item_id']] = $item;
         }
 
         // Return the trimmed menu
@@ -230,7 +263,7 @@ class ParseMenu implements ParserInterface
                 }
 
                 // If in bounds, add the item to the new menu
-                $slice_menu[] = $item;
+                $slice_menu[$item['menu_item_id']] = $item;
             }
         }
 
@@ -297,9 +330,37 @@ class ParseMenu implements ParserInterface
             }
 
             // Add this item into the menu being formed
-            $full_menu[] = $item;
+            $full_menu[$item['menu_item_id']] = $item;
         }
 
         return $full_menu;
+    }
+
+    /**
+     * Get an item from an array using "dot" notation.
+     *
+     * @param  string $key
+     * @param  mixed $default
+     * @return mixed
+     */
+    private static function array_get($array, $key, $default = null)
+    {
+        if (!is_array($array)) {
+            return value($default);
+        }
+        if (is_null($key)) {
+            return $array;
+        }
+        if (array_key_exists($key, $array)) {
+            return $array[$key];
+        }
+        foreach (explode('.', $key) as $segment) {
+            if (is_array($array) && array_key_exists($segment, $array)) {
+                $array = $array[$segment];
+            } else {
+                return value($default);
+            }
+        }
+        return $array;
     }
 }

@@ -161,7 +161,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Verify menu item has a boolean flag
-        $this->assertTrue($parsed['menu'][0]['is_selected']);
+        $this->assertTrue($parsed['menu'][1]['is_selected']);
 
         // Verify meta information matches
         $this->assertTrue($parsed['meta']['has_selected']);
@@ -182,7 +182,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $parsed = $this->parser->parse($this->menu, $config);
 
         // Verify the first menu item no longer has submenu items to display
-        $this->assertCount(0, $parsed['menu'][0]['submenu']);
+        $this->assertCount(0, $parsed['menu'][1]['submenu']);
 
         // Verify meta information matches
         $this->assertTrue($parsed['meta']['has_selected']);
@@ -204,7 +204,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $selected_menu = $this->parser->parse($this->menu, $config);
 
         // Verify the first menu item no longer has submenu items to display
-        $this->assertCount(count($this->menu[0]['submenu']), $selected_menu['menu'][0]['submenu']);
+        $this->assertCount(count($this->menu[0]['submenu']), $selected_menu['menu'][1]['submenu']);
 
         // No configuration options
         $config = array(
@@ -215,7 +215,7 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $full_menu = $this->parser->parse($this->menu, $config);
 
         // Verify the first menu item no longer has submenu items to display
-        $this->assertCount(count($this->menu[0]['submenu']), $full_menu['menu'][0]['submenu']);
+        $this->assertCount(count($this->menu[0]['submenu']), $full_menu['menu'][1]['submenu']);
     }
 
     /**
@@ -238,6 +238,72 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
 
         $this->assertFalse($parsed['meta']['has_selected']);
         $this->assertEmpty($parsed['meta']['path']);
+    }
+
+    /**
+     * @test
+     */
+    public function breadcrumbsShouldMatchPathCount()
+    {
+        // Set a selected page
+        $config = array(
+            'page_selected' => 9,
+        );
+
+        $parsed = $this->parser->parse($this->menu, $config);
+        $breadcrumbs = $this->parser->getBreadCrumbs($parsed);
+
+        // # of breadcrumbs in $breadcrumbs is the same as the parsed path count
+        $this->assertCount(count($parsed['meta']['path']), $breadcrumbs);
+    }
+
+    /**
+     * @test
+     */
+    public function breadcrumbsMenuItemIDShouldBeInPath()
+    {
+        // Set a selected page
+        $config = array(
+            'page_selected' => 9,
+        );
+
+        $parsed = $this->parser->parse($this->menu, $config);
+        $breadcrumbs = $this->parser->getBreadCrumbs($parsed);
+
+        // # of breadcrumbs in $breadcrumbs is the same as the parsed path count
+        foreach((array)$breadcrumbs as $key => $crumb){
+            $this->assertContains($crumb['menu_item_id'], $parsed['meta']['path']);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function prependBreadCrumbsShouldAddBreadCrumb()
+    {
+        // Set a selected page
+        $config = array(
+            'page_selected' => 9,
+        );
+
+        $parsed = $this->parser->parse($this->menu, $config);
+        $breadcrumbs = $this->parser->getBreadCrumbs($parsed);
+
+        // Create crumb for the root
+        $root_crumb = array(
+                'menu_item_id' => 11,
+                'menu_id' => 1,
+                'page_id' => 11,
+                'parent_id' => 0,
+                'is_active' => true,
+                'display_name' => 'BreadCrumb',
+                'submenu' => null
+        );
+
+        // Get the breadcrumbs with the added crumb
+        $breadcrumbs = $this->parser->prependBreadCrumb($breadcrumbs, $root_crumb);
+
+        $this->assertEquals($breadcrumbs[0], $root_crumb);
     }
 
     /**
