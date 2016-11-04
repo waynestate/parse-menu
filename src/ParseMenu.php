@@ -159,7 +159,7 @@ class ParseMenu implements ParserInterface
             }
 
             // If this individual item matches the page, keep track of it
-            if ($item['page_id'] == $page_id) {
+            if ($item['page_id'] == $page_id && !in_array($item['menu_item_id'], $path)) {
                 $path[] = $item['menu_item_id'];
             }
         }

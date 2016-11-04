@@ -120,6 +120,84 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
                 'submenu' => array(),
             ),
         );
+
+        // Stub
+        $this->doublePageMenu = array(
+            array(
+                'menu_item_id' => 1,
+                'menu_id' => 1,
+                'page_id' => 1,
+                'parent_id' => 0,
+                'is_active' => true,
+                'display_name' => 'First',
+                'submenu' => array(
+                    array(
+                        'menu_item_id' => 3,
+                        'menu_id' => 1,
+                        'page_id' => 2,
+                        'parent_id' => 1,
+                        'is_active' => true,
+                        'display_name' => 'Nest One',
+                        'submenu' => array(),
+                    ),
+                    array(
+                        'menu_item_id' => 4,
+                        'menu_id' => 1,
+                        'page_id' => 3,
+                        'parent_id' => 1,
+                        'is_active' => true,
+                        'display_name' => 'Nest Two',
+                        'submenu' => array(),
+                    ),
+                    array(
+                        'menu_item_id' => 5,
+                        'menu_id' => 1,
+                        'page_id' => 1,
+                        'parent_id' => 1,
+                        'is_active' => true,
+                        'display_name' => 'Nest Three',
+                        'submenu' => array(),
+                    ),
+                ),
+            ),
+            array(
+                'menu_item_id' => 2,
+                'menu_id' => 1,
+                'page_id' => 2,
+                'parent_id' => 0,
+                'is_active' => true,
+                'display_name' => 'Second',
+                'submenu' => array(
+                    array(
+                        'menu_item_id' => 6,
+                        'menu_id' => 1,
+                        'page_id' => 7,
+                        'parent_id' => 2,
+                        'is_active' => false,
+                        'display_name' => 'Two Nest One',
+                        'submenu' => array(),
+                    ),
+                    array(
+                        'menu_item_id' => 7,
+                        'menu_id' => 1,
+                        'page_id' => 8,
+                        'parent_id' => 2,
+                        'is_active' => false,
+                        'display_name' => 'Two Nest Two',
+                        'submenu' => array(),
+                    ),
+                ),
+            ),
+            array(
+                'menu_item_id' => 10,
+                'menu_id' => 1,
+                'page_id' => 11,
+                'parent_id' => 0,
+                'is_active' => true,
+                'display_name' => 'Third',
+                'submenu' => array(),
+            ),
+        );
     }
 
     /**
@@ -304,6 +382,22 @@ class ParseMenuTest extends PHPUnit_Framework_TestCase
         $breadcrumbs = $this->parser->prependBreadCrumb($breadcrumbs, $root_crumb);
 
         $this->assertEquals($breadcrumbs[0], $root_crumb);
+    }
+
+    /**
+     * @test
+     */
+    public function metaPathShouldAllowMultiplePageIDsPartOfTheTraversedPath()
+    {
+        // Set a selected page
+        $config = array(
+            'page_selected' => 1,
+        );
+
+        $parsed = $this->parser->parse($this->doublePageMenu, $config);
+
+        $path = array(0 => 1, 1 => 5);
+        $this->assertEquals($path, $parsed['meta']['path']);
     }
 
     /**
